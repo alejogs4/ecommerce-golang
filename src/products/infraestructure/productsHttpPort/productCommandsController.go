@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	productcommands "github.com/alejogs4/hn-website/src/products/application/productCommands"
+	productshttperror "github.com/alejogs4/hn-website/src/products/infraestructure/productsHttpPort/productsHttpError"
 	httputils "github.com/alejogs4/hn-website/src/shared/infraestructure/httpUtils"
-	usererrormapper "github.com/alejogs4/hn-website/src/user/infraestructure/userHttpPort/userErrorMapper"
 )
 
 // ProductCommandsControllers .
@@ -27,7 +27,7 @@ func (pcc *productCommandsControllers) CreateProductController(w http.ResponseWr
 
 	err := json.NewDecoder(r.Body).Decode(&productInformation)
 	if err != nil {
-		httpError := usererrormapper.MapUserErrorToHTTPError(err)
+		httpError := productshttperror.MapProductErrorToHTTPError(err)
 		httputils.DispatchHTTPError(w, httpError.Message, httpError.StatusCode)
 		return
 	}
@@ -40,7 +40,7 @@ func (pcc *productCommandsControllers) CreateProductController(w http.ResponseWr
 		productInformation.Price,
 	)
 	if err != nil {
-		httpError := usererrormapper.MapUserErrorToHTTPError(err)
+		httpError := productshttperror.MapProductErrorToHTTPError(err)
 		httputils.DispatchHTTPError(w, httpError.Message, httpError.StatusCode)
 		return
 	}

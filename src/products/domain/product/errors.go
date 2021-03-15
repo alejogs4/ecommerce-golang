@@ -9,4 +9,5 @@ var (
 	ErrProductQuantity            = errors.New("Product: Product quantity cannot be negative")
 	ErrNoEnoughQuantity           = errors.New("Product: There are not enought products")
 	ErrInvalidState               = errors.New("Product: invalid product state")
+	ErrNoExistingProduct          = errors.New("Product: product doesn't exist")
 )

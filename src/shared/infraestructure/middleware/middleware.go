@@ -7,8 +7,8 @@ type Middleware func(http.HandlerFunc) http.HandlerFunc
 
 // Chain reduce several http handlers into a single one in order to compose several http level behaviors
 func Chain(fn http.HandlerFunc, middlewares ...Middleware) http.HandlerFunc {
-	for _, m := range middlewares {
-		fn = m(fn)
+	for i := len(middlewares) - 1; i > -1; i-- {
+		fn = middlewares[i](fn)
 	}
 
 	return fn

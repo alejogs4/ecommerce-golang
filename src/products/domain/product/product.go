@@ -1,6 +1,10 @@
 package product
 
-import "github.com/alejogs4/hn-website/src/shared/domain/valueobject"
+import (
+	"time"
+
+	"github.com/alejogs4/hn-website/src/shared/domain/valueobject"
+)
 
 // Product object entity
 type Product struct {
@@ -11,6 +15,7 @@ type Product struct {
 	state       State
 	quantity    int
 	price       float64
+	createdAt   time.Time
 }
 
 // NewProduct create a new product making the business checks, returning errors if some of these checks fails
@@ -45,10 +50,12 @@ func NewProduct(id, name, description, picture string, quantity int, price float
 		price:       price,
 		quantity:    quantity,
 		state:       productState,
+		createdAt:   time.Now(),
 	}, nil
 }
 
-func FromPrimitives(id, name, description, picture string, quantity int, price float64, productState string) (Product, error) {
+// FromPrimitives retrieves a project from its primitives values
+func FromPrimitives(id, name, description, picture string, quantity int, price float64, productState, createdAt string) (Product, error) {
 	productID := valueobject.NewMaybeEmpty(id)
 	productName := valueobject.NewMaybeEmpty(name)
 	productDescription := valueobject.NewMaybeEmpty(description)
@@ -71,6 +78,11 @@ func FromPrimitives(id, name, description, picture string, quantity int, price f
 		return Product{}, err
 	}
 
+	createdAtTime, err := time.Parse("2006-01-02T15:04:05.000Z", createdAt)
+	if err != nil {
+		return Product{}, err
+	}
+
 	return Product{
 		id:          productID,
 		name:        productName,
@@ -79,6 +91,7 @@ func FromPrimitives(id, name, description, picture string, quantity int, price f
 		state:       validState,
 		quantity:    quantity,
 		price:       price,
+		createdAt:   createdAtTime,
 	}, nil
 }
 
@@ -147,4 +160,8 @@ func (p *Product) Quantity() int {
 // Price getter
 func (p *Product) Price() float64 {
 	return p.price
+}
+
+func (p *Product) CreatedAt() time.Time {
+	return p.createdAt
 }
