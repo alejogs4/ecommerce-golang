@@ -31,7 +31,8 @@ func (cc commandsControllers) CreateUserController(w http.ResponseWriter, r *htt
 
 	err = cc.UseCases.CreateUser(incommingUser.Name, incommingUser.Lastname, incommingUser.Email, incommingUser.Password)
 	if err != nil {
-		httputils.DispatchHTTPError(w, "Something went wrong creating the user", http.StatusInternalServerError)
+		httpError := usererrormapper.MapUserErrorToHTTPError(err)
+		httputils.DispatchHTTPError(w, httpError.Message, httpError.StatusCode)
 		return
 	}
 

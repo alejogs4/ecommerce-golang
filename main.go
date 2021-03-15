@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"os"
 
+	carthttpport "github.com/alejogs4/hn-website/src/cart/infraestructure/cartHttpPort"
+	cartpostgresrepository "github.com/alejogs4/hn-website/src/cart/infraestructure/cartPostgresRepository"
 	postgresproductrepository "github.com/alejogs4/hn-website/src/products/infraestructure/postgresProductRepository"
 	productshttpport "github.com/alejogs4/hn-website/src/products/infraestructure/productsHttpPort"
 	"github.com/alejogs4/hn-website/src/shared/infraestructure/email"
@@ -35,8 +37,24 @@ func main() {
 	httpRouter := mux.NewRouter()
 	port := fmt.Sprintf(":%s", os.Getenv("PORT"))
 
-	userhttpport.HandleUserControllers(httpRouter, userrepository.NewUserPostgresCommandsRepository(database), email.SMPTService{})
-	productshttpport.HandleProductsControllers(httpRouter, postgresproductrepository.NewPostgresProductCommandsRepository(database))
+	userhttpport.HandleUserControllers(
+		httpRouter,
+		userrepository.NewUserPostgresCommandsRepository(database),
+		email.SMPTService{},
+	)
+
+	productshttpport.HandleProductsControllers(
+		httpRouter,
+		postgresproductrepository.NewPostgresProductCommandsRepository(database),
+		postgresproductrepository.NewProductQueriesPostgresRepository(database),
+	)
+
+	carthttpport.HandleCartRoutes(
+		httpRouter,
+		cartpostgresrepository.NewCartQueriesPostgresRespository(database),
+		cartpostgresrepository.NewCartCommandsPostgresRespository(database),
+		postgresproductrepository.NewProductQueriesPostgresRepository(database),
+	)
 
 	log.Println(fmt.Sprintf("Initializing server in port %s", port))
 	log.Fatal(http.ListenAndServe(port, httpRouter))

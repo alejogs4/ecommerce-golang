@@ -49,7 +49,7 @@ func FromPrimitives(id, userID, state, createdAt string, products []Item) (Cart,
 		return Cart{}, err
 	}
 
-	createdAtTime, err := time.Parse("2006-01-02T15:04:05.000Z", createdAt)
+	createdAtTime, err := time.Parse(time.RFC3339, createdAt)
 	if err != nil {
 		return Cart{}, err
 	}
@@ -68,9 +68,17 @@ func (c *Cart) GetID() string {
 }
 
 func (c *Cart) GetUserID() string {
-	return c.GetUserID()
+	return c.userID.String()
 }
 
 func (c *Cart) GetState() string {
 	return string(c.state)
+}
+
+func (c *Cart) GetCreatedAt() time.Time {
+	return c.createdAt
+}
+
+func (c *Cart) GetProducts() []Item {
+	return c.products
 }

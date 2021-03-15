@@ -22,12 +22,9 @@ func HandleProductsControllers(
 	productCommandsController := productCommandsControllers{ProductCommandUseCases: productsCommandsUseCases}
 	productsQueriesController := productQueriesControllers{productsUseCases: productquery.NewProductQueriesUseCases(productsQueriesRepository)}
 
-	router.HandleFunc("/api/v1/product", middleware.Chain(
-		productCommandsController.CreateProductController,
-		httputils.Method(http.MethodPost),
-		authorization.ValidateToken(),
-		authorization.EnsureEmailVerified(),
-		authorization.AdminOperation(),
+	router.HandleFunc("/api/v1/product/{id}", middleware.Chain(
+		productsQueriesController.GetByIDController,
+		httputils.Method(http.MethodGet),
 	))
 
 	router.HandleFunc("/api/v1/products", middleware.Chain(
@@ -35,8 +32,11 @@ func HandleProductsControllers(
 		httputils.Method(http.MethodGet),
 	))
 
-	router.HandleFunc("/api/v1/product/:id", middleware.Chain(
-		productsQueriesController.GetByIDController,
-		httputils.Method(http.MethodGet),
+	router.HandleFunc("/api/v1/product", middleware.Chain(
+		productCommandsController.CreateProductController,
+		httputils.Method(http.MethodPost),
+		authorization.ValidateToken(),
+		authorization.EnsureEmailVerified(),
+		authorization.AdminOperation(),
 	))
 }

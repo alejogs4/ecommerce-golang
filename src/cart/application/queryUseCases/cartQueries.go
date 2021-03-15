@@ -1,28 +1,36 @@
 package queryusecases
 
-import "github.com/alejogs4/hn-website/src/cart/domain/cart"
+import (
+	cartdto "github.com/alejogs4/hn-website/src/cart/application/cartDTO"
+	"github.com/alejogs4/hn-website/src/cart/domain/cart"
+)
 
 // CartQueries use cases to fetch user information
 type CartQueries struct {
-	queries cart.Queries
+	queries cart.QueriesRepository
 }
 
 // NewCartQueries returns a new instance of CartQueries use cases
-func NewCartQueries(queries cart.Queries) CartQueries {
+func NewCartQueries(queries cart.QueriesRepository) CartQueries {
 	return CartQueries{queries: queries}
 }
 
 // GetUserCart validates if inProgress cart exists beforehand besides verify user fetching cart is the same which is the owner
-func (cq *CartQueries) GetUserCart(userID string) (cart.Cart, error) {
+func (cq *CartQueries) GetUserCart(userID string) (cartdto.CartDTO, error) {
 	existCart, err := cq.queries.ExistUserCart(userID)
 
 	if err != nil {
-		return cart.Cart{}, err
+		return cartdto.CartDTO{}, err
 	}
 
 	if !existCart {
-		return cart.Cart{}, cart.ErrNotExistingCart
+		return cartdto.CartDTO{}, cart.ErrNotExistingCart
 	}
 
-	return cq.queries.GetUserCart(userID)
+	userCart, err := cq.queries.GetUserCart(userID)
+	if err != nil {
+		return cartdto.CartDTO{}, err
+	}
+
+	return cartdto.FromEntity(userCart), nil
 }

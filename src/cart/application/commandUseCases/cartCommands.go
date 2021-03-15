@@ -67,6 +67,8 @@ func (cc *CartCommands) AddCartItem(userID, productID string) (string, error) {
 		return "", product.ErrNoEnoughQuantity
 	}
 
+	// TODO: Reduce product quantity by one
+
 	cartItemID := uuid.New().String()
 	cartItem := cart.NewCartItem(cartItemID, cartProduct, cart.ADDED)
 	if err := cc.commands.AddCartItem(cartItem, cartID); err != nil {

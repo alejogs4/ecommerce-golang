@@ -28,6 +28,10 @@ func (item *Item) ProductID() string {
 	return item.product.ID()
 }
 
+func (item *Item) Product() product.Product {
+	return item.product
+}
+
 func (item *Item) State() string {
 	return string(item.state)
 }

@@ -46,7 +46,7 @@ func NewProduct(id, name, description, picture string, quantity int, price float
 		id:          productID,
 		name:        productName,
 		description: productDescription,
-		picture:     productDescription,
+		picture:     productPicture,
 		price:       price,
 		quantity:    quantity,
 		state:       productState,
@@ -78,7 +78,7 @@ func FromPrimitives(id, name, description, picture string, quantity int, price f
 		return Product{}, err
 	}
 
-	createdAtTime, err := time.Parse("2006-01-02T15:04:05.000Z", createdAt)
+	createdAtTime, err := time.Parse(time.RFC3339, createdAt)
 	if err != nil {
 		return Product{}, err
 	}

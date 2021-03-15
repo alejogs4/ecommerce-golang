@@ -36,7 +36,7 @@ func (cqr CartQueriesPostgresRespository) GetUserCart(userID string) (cart.Cart,
 	}
 
 	rows, err := cqr.db.Query(`
-  SELECT i.id, i.state, p.id, p.name, p.description, p.picture, p.state, p.quantity, p.price
+  SELECT i.id, i.state, p.id, p.name, p.description, p.picture, p.state, p.quantity, p.price, p.created_at
   FROM cart_item AS i
   INNER JOIN products AS p
   ON i.product_id = p.id
@@ -59,13 +59,16 @@ func (cqr CartQueriesPostgresRespository) GetUserCart(userID string) (cart.Cart,
 		var productState string
 		var productQuantity int
 		var productPrice float64
+		var createdAt string
 
-		err := rows.Scan(&itemID, &itemState, &productID, &productName, &productDescription, &productPicture, &productState, &productQuantity, &productPrice)
+		err := rows.Scan(
+			&itemID, &itemState, &productID, &productName, &productDescription, &productPicture, &productState, &productQuantity, &productPrice, &createdAt,
+		)
 		if err != nil {
 			return cart.Cart{}, err
 		}
 
-		cartItemProduct, err := product.FromPrimitives(productID, productName, productDescription, productPicture, productQuantity, productPrice, productState)
+		cartItemProduct, err := product.FromPrimitives(productID, productName, productDescription, productPicture, productQuantity, productPrice, productState, createdAt)
 		if err != nil {
 			return cart.Cart{}, err
 		}

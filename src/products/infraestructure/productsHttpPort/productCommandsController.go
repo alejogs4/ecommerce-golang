@@ -25,8 +25,7 @@ func (pcc *productCommandsControllers) CreateProductController(w http.ResponseWr
 		Price       float64 `json:"price"`
 	}
 
-	err := json.NewDecoder(r.Body).Decode(&productInformation)
-	if err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&productInformation); err != nil {
 		httpError := productshttperror.MapProductErrorToHTTPError(err)
 		httputils.DispatchHTTPError(w, httpError.Message, httpError.StatusCode)
 		return

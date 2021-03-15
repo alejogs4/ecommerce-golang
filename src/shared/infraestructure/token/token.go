@@ -32,7 +32,7 @@ func CreateToken(payload userdto.UserLoginDTO) (string, error) {
 func GetUserFromToken(token string) (userdto.UserLoginDTO, error) {
 	parsedToken, err := jwt.ParseWithClaims(token, &claimer{}, verifyFunction)
 	if err != nil {
-		return userdto.UserLoginDTO{}, err
+		return userdto.UserLoginDTO{}, user.ErrInvalidAuth
 	}
 
 	if !parsedToken.Valid {
