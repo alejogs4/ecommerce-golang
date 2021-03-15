@@ -8,22 +8,25 @@ import (
 
 // CartCommands struct which will handle the application rules for add new cart item
 type CartCommands struct {
-	commands       cart.Commands
-	queries        cart.Queries
+	commands       cart.CommandsRepository
+	queries        cart.QueriesRepository
 	productQueries product.QueriesRepository
 }
 
 // NewCartCommand returns a new instance of CartCommands
-func NewCartCommand(commands cart.Commands, queries cart.Queries, productQueries product.QueriesRepository) CartCommands {
+func NewCartCommand(commands cart.CommandsRepository, queries cart.QueriesRepository, productQueries product.QueriesRepository) CartCommands {
 	return CartCommands{commands: commands, queries: queries, productQueries: productQueries}
 }
 
 // AddCartItem validate if new cart is necessary for the user and at the end add the item if rules apply
 func (cc *CartCommands) AddCartItem(userID, productID string) (string, error) {
-	existCart := cc.queries.ExistUserCart(userID)
+	existCart, err := cc.queries.ExistUserCart(userID)
+	if err != nil {
+		return "", err
+	}
+
 	userCart := cart.Cart{}
 	cartID := ""
-	var err error
 
 	// Create cart if doesn't exist
 	if !existCart {
@@ -75,7 +78,7 @@ func (cc *CartCommands) AddCartItem(userID, productID string) (string, error) {
 
 // RemoveCartItem remove cart item and cart itself if the removed cart item was the last one remaining item
 func (cc *CartCommands) RemoveCartItem(userID, itemID, cartID string) error {
-	err := cc.commands.RemoveCartItem(itemID, userID)
+	err := cc.commands.RemoveCartItem(itemID)
 	if err != nil {
 		return err
 	}

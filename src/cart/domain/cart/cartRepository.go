@@ -1,18 +1,18 @@
 package cart
 
-// Queries to fetch information about user cart
-type Queries interface {
+// QueriesRepository to fetch information about user cart
+type QueriesRepository interface {
 	GetUserCart(userID string) (Cart, error)
-	ExistUserCart(userID string) bool
+	ExistUserCart(userID string) (bool, error)
 	GetCartItemCount(productID, cartID string) (int, error)
 	GetCartProductsCount(cartID string) (int, error)
 }
 
-// Commands to add remove and finally buy user cart items
-type Commands interface {
+// CommandsRepository to add remove and finally buy user cart items
+type CommandsRepository interface {
 	CreateCart(cart Cart) error
 	AddCartItem(item Item, cartID string) error
-	RemoveCartItem(cartItemID, userID string) error
+	RemoveCartItem(cartItemID string) error
 	RemoveCart(cartID string) error
 	BuyCart(cartID string) error
 }

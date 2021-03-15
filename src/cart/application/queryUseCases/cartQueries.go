@@ -14,7 +14,12 @@ func NewCartQueries(queries cart.Queries) CartQueries {
 
 // GetUserCart validates if inProgress cart exists beforehand besides verify user fetching cart is the same which is the owner
 func (cq *CartQueries) GetUserCart(userID string) (cart.Cart, error) {
-	existCart := cq.queries.ExistUserCart(userID)
+	existCart, err := cq.queries.ExistUserCart(userID)
+
+	if err != nil {
+		return cart.Cart{}, err
+	}
+
 	if !existCart {
 		return cart.Cart{}, cart.ErrNotExistingCart
 	}

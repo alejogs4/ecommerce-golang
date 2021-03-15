@@ -23,3 +23,11 @@ func NewCartItem(id string, product product.Product, state ItemState) Item {
 func (item *Item) ID() string {
 	return item.id
 }
+
+func (item *Item) ProductID() string {
+	return item.product.ID()
+}
+
+func (item *Item) State() string {
+	return string(item.state)
+}

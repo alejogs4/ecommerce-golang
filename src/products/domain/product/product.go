@@ -48,6 +48,40 @@ func NewProduct(id, name, description, picture string, quantity int, price float
 	}, nil
 }
 
+func FromPrimitives(id, name, description, picture string, quantity int, price float64, productState string) (Product, error) {
+	productID := valueobject.NewMaybeEmpty(id)
+	productName := valueobject.NewMaybeEmpty(name)
+	productDescription := valueobject.NewMaybeEmpty(description)
+	productPicture := valueobject.NewMaybeEmpty(picture)
+
+	if productID.IsEmpty() || productName.IsEmpty() || productDescription.IsEmpty() || productPicture.IsEmpty() {
+		return Product{}, ErrBadProductData
+	}
+
+	if price <= 0 {
+		return Product{}, ErrZeroOrNegativeProductPrice
+	}
+
+	if quantity < 0 {
+		return Product{}, ErrProductQuantity
+	}
+
+	validState, err := NewState(productState)
+	if err != nil {
+		return Product{}, err
+	}
+
+	return Product{
+		id:          productID,
+		name:        productName,
+		description: productDescription,
+		picture:     productPicture,
+		state:       validState,
+		quantity:    quantity,
+		price:       price,
+	}, nil
+}
+
 // RetrieveProductToUpdate get an existing product putting default quantity that will no be used in the future
 func RetrieveProductToUpdate(id, name, description, picture string, price float64) (Product, error) {
 	return NewProduct(id, name, description, picture, 10, price)

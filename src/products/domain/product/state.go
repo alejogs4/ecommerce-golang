@@ -12,6 +12,14 @@ const (
 	Removed State = "REMOVED"
 )
 
+func NewState(str string) (State, error) {
+	if str != Active.String() && str != UnAvailable.String() && str != Removed.String() {
+		return State(""), ErrInvalidState
+	}
+
+	return State(str), nil
+}
+
 func (ps State) String() string {
 	return string(ps)
 }

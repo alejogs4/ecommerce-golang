@@ -9,4 +9,5 @@ var (
 	ErrNotExistingCart            = errors.New("Cart: User has not any in progress cart")
 	ErrInvalidCartStateTransition = errors.New("Cart: Invalid cart state transition")
 	ErrInvalidCartState           = errors.New("Cart: Invalid cart state")
+	ErrInvalidCartItemState       = errors.New("Cart: Invalid cart item state")
 )

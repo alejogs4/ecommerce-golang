@@ -12,6 +12,15 @@ const (
 	Removed State = "Removed"
 )
 
+// NewState returns a new valid state
+func NewState(str string) (State, error) {
+	if str != string(InProgress) && str != string(Ordered) && str != string(Removed) {
+		return State(""), ErrInvalidCartState
+	}
+
+	return State(str), nil
+}
+
 // SetNewState acts as a simple state transitioning function, to set a new state as long as this is a valid one
 func (s State) SetNewState(newState State) (State, error) {
 	if s == Ordered || s == Removed {
