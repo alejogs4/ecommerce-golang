@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	commandusecases "github.com/alejogs4/hn-website/src/cart/application/commandUseCases"
+	carthttperror "github.com/alejogs4/hn-website/src/cart/infraestructure/cartHttpPort/cartHttpError"
 	httputils "github.com/alejogs4/hn-website/src/shared/infraestructure/httpUtils"
 	userdto "github.com/alejogs4/hn-website/src/user/application/userDTO"
 	"github.com/gorilla/mux"
@@ -22,7 +23,8 @@ func (ctc *cartHTTPCommands) AddCartItem(rw http.ResponseWriter, r *http.Request
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&cartItem); err != nil {
-		httputils.DispatchHTTPError(rw, "Something went wrong", http.StatusInternalServerError)
+		httpError := carthttperror.MapCartErrorToHTTPError(err)
+		httputils.DispatchHTTPError(rw, httpError.Message, httpError.StatusCode)
 		return
 	}
 
@@ -30,7 +32,8 @@ func (ctc *cartHTTPCommands) AddCartItem(rw http.ResponseWriter, r *http.Request
 	cartItemID, err := ctc.cartCommands.AddCartItem(loggedUser.ID, cartItem.ProductID)
 
 	if err != nil {
-		httputils.DispatchHTTPError(rw, "Something went wrong", http.StatusInternalServerError)
+		httpError := carthttperror.MapCartErrorToHTTPError(err)
+		httputils.DispatchHTTPError(rw, httpError.Message, httpError.StatusCode)
 		return
 	}
 
@@ -46,7 +49,8 @@ func (ctc *cartHTTPCommands) RemoverCartItemController(rw http.ResponseWriter, r
 
 	err := ctc.cartCommands.RemoveCartItem(loggedUser.ID, cartItemID, cartID)
 	if err != nil {
-		httputils.DispatchHTTPError(rw, "Something went wrong", http.StatusInternalServerError)
+		httpError := carthttperror.MapCartErrorToHTTPError(err)
+		httputils.DispatchHTTPError(rw, httpError.Message, httpError.StatusCode)
 		return
 	}
 
