@@ -1,7 +1,7 @@
 package usercommands
 
 import (
-	"github.com/alejogs4/hn-website/src/shared/domain/domainevent"
+	usecase "github.com/alejogs4/hn-website/src/shared/domain/useCase"
 	userdto "github.com/alejogs4/hn-website/src/user/application/userDTO"
 	"github.com/alejogs4/hn-website/src/user/domain/user"
 	userevents "github.com/alejogs4/hn-website/src/user/domain/user/userEvents"
@@ -12,12 +12,12 @@ import (
 // UseCases uses cases for application user
 type UseCases struct {
 	commands user.CommandsRepository
-	handlers map[string][]domainevent.DomainEventHandler
+	usecase.EventScheduler
 }
 
 // NewUserCommandsUseCases returns a new instance of UserCommandsUseCases
 func NewUserCommandsUseCases(commands user.CommandsRepository) UseCases {
-	return UseCases{commands: commands, handlers: make(map[string][]domainevent.DomainEventHandler)}
+	return UseCases{commands: commands, EventScheduler: usecase.NewEventScheduler()}
 }
 
 // LoginUser executes and verify user login and before it hash incoming password with a cost of 14
@@ -42,16 +42,11 @@ func (uc *UseCases) CreateUser(name, lastname, email, password string) error {
 		return err
 	}
 
-	go createdUser.DispatchRegisteredEvents(uc.handlers, []string{userevents.UserCreatedEvent})
+	go createdUser.DispatchRegisteredEvents(uc.Handlers(), []string{userevents.UserCreatedEvent})
 	return uc.commands.CreateUser(createdUser)
 }
 
 // VerifyEmail executes user email verify in order to approve the use of user registered email
 func (uc *UseCases) VerifyEmail(userEmail string) error {
 	return uc.commands.VerifyEmail(userEmail)
-}
-
-// RegisterEventHandler UseCase interface implementation for register event handlers for user commands use cases
-func (uc *UseCases) RegisterEventHandler(eventName string, handler domainevent.DomainEventHandler) {
-	uc.handlers[eventName] = append(uc.handlers[eventName], handler)
 }
