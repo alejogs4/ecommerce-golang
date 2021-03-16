@@ -46,6 +46,7 @@ func (uc *UseCases) CreateUser(name, lastname, email, password string) error {
 	return uc.commands.CreateUser(createdUser)
 }
 
+// VerifyEmail executes user email verify in order to approve the use of user registered email
 func (uc *UseCases) VerifyEmail(userEmail string) error {
 	return uc.commands.VerifyEmail(userEmail)
 }

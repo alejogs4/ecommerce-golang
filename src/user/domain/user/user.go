@@ -1,11 +1,9 @@
 package user
 
 import (
-	"log"
-	"strings"
 	"unicode/utf8"
 
-	"github.com/alejogs4/hn-website/src/shared/domain/domainevent"
+	"github.com/alejogs4/hn-website/src/shared/domain/aggregate"
 	"github.com/alejogs4/hn-website/src/shared/domain/valueobject"
 	userevents "github.com/alejogs4/hn-website/src/user/domain/user/userEvents"
 )
@@ -21,7 +19,7 @@ type User struct {
 	email         valueobject.MaybeEmpty
 	password      valueobject.MaybeEmpty
 	admin         bool
-	events        []domainevent.DomainEvent
+	aggregate.CommonAggregate
 }
 
 // NewUser returns a new user entitiy validating passed fields
@@ -49,37 +47,9 @@ func NewUser(id, name, lastname, email, password string, admin, emailVerified bo
 		emailVerified: emailVerified,
 	}
 
-	createdUser.registerEvent(userevents.UserCreated{Information: createdUser})
+	createdUser.RegisterEvent(userevents.UserCreated{Information: createdUser})
 
 	return createdUser, nil
-}
-
-func (u *User) registerEvent(event domainevent.DomainEvent) {
-	u.events = append(u.events, event)
-}
-
-// DispatchRegisteredEvents implementation to execute user events handlers
-func (u *User) DispatchRegisteredEvents(eventHandlers map[string][]domainevent.DomainEventHandler, targetEvents []string) {
-	// TODO: Look how abstract this in a separate struct in order to reduce repetition, this will be the same in all
-	eventsString := strings.Join(targetEvents, " ")
-
-	for _, e := range u.events {
-		if !strings.Contains(eventsString, e.Name()) {
-			continue
-		}
-
-		if eventHandlers, ok := eventHandlers[e.Name()]; ok {
-			for _, handler := range eventHandlers {
-				go func(hn domainevent.DomainEventHandler, event domainevent.DomainEvent) {
-					err := hn.Run(event)
-					if err != nil {
-						// It's a decision that event handler errors will not stop application
-						log.Printf("Error: %s in event: %v", err, event)
-					}
-				}(handler, e)
-			}
-		}
-	}
 }
 
 // GetID .
