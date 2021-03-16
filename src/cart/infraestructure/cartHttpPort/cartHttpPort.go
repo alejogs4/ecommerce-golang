@@ -35,4 +35,11 @@ func HandleCartRoutes(
 		authorization.ValidateToken(),
 		authorization.EnsureEmailVerified(),
 	))
+
+	router.Handle("/api/v1/cart/{cartID}/item/{cartItem}", middleware.Chain(
+		cartCommands.RemoverCartItemController,
+		httputils.Method(http.MethodDelete),
+		authorization.ValidateToken(),
+		authorization.EnsureEmailVerified(),
+	))
 }

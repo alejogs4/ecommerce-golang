@@ -80,7 +80,16 @@ func (cc *CartCommands) AddCartItem(userID, productID string) (string, error) {
 
 // RemoveCartItem remove cart item and cart itself if the removed cart item was the last one remaining item
 func (cc *CartCommands) RemoveCartItem(userID, itemID, cartID string) error {
-	err := cc.commands.RemoveCartItem(itemID)
+	currentCart, err := cc.queries.GetUserCart(userID)
+	if err != nil {
+		return err
+	}
+
+	if currentCart.GetID() != cartID {
+		return cart.ErrUnauthorizedAction
+	}
+
+	err = cc.commands.RemoveCartItem(itemID)
 	if err != nil {
 		return err
 	}
