@@ -52,6 +52,18 @@ func NewUser(id, name, lastname, email, password string, admin, emailVerified bo
 	return createdUser, nil
 }
 
+func FromPrimitives(id, name, lastname, email string, admin, emailVerified bool) User {
+	return User{
+		id:            valueobject.NewMaybeEmpty(id),
+		name:          valueobject.NewMaybeEmpty(name),
+		emailVerified: emailVerified,
+		lastname:      valueobject.NewMaybeEmpty(lastname),
+		email:         valueobject.NewMaybeEmpty(email),
+		password:      "",
+		admin:         admin,
+	}
+}
+
 // GetID .
 func (u *User) GetID() string {
 	return u.id.String()

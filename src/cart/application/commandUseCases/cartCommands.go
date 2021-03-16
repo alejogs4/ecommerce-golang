@@ -1,16 +1,23 @@
 package commandusecases
 
 import (
+	"sync"
+
 	"github.com/alejogs4/hn-website/src/cart/domain/cart"
+	cartevents "github.com/alejogs4/hn-website/src/cart/domain/cart/cartEvents"
 	"github.com/alejogs4/hn-website/src/products/domain/product"
+	usecase "github.com/alejogs4/hn-website/src/shared/domain/useCase"
 	"github.com/google/uuid"
 )
+
+var cartLock sync.Mutex
 
 // CartCommands struct which will handle the application rules for add new cart item
 type CartCommands struct {
 	commands       cart.CommandsRepository
 	queries        cart.QueriesRepository
 	productQueries product.QueriesRepository
+	usecase.EventScheduler
 }
 
 // NewCartCommand returns a new instance of CartCommands
@@ -104,4 +111,28 @@ func (cc *CartCommands) RemoveCartItem(userID, itemID, cartID string) error {
 	}
 
 	return nil
+}
+
+func (cc *CartCommands) BuyCart(userID string) error {
+	cartLock.Lock()
+	defer cartLock.Unlock()
+
+	currentCart, err := cc.queries.GetUserCart(userID)
+	if err != nil {
+		return err
+	}
+
+	err = currentCart.BuyCart()
+	if err != nil {
+		return err
+	}
+
+	err = cc.commands.BuyCart(currentCart)
+	if err != nil {
+		return err
+	}
+
+	go currentCart.DispatchRegisteredEvents(cc.Handlers(), []string{cartevents.Bougth})
+
+	return err
 }

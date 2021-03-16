@@ -3,6 +3,8 @@ package cart
 import (
 	"time"
 
+	cartevents "github.com/alejogs4/hn-website/src/cart/domain/cart/cartEvents"
+	"github.com/alejogs4/hn-website/src/shared/domain/aggregate"
 	"github.com/alejogs4/hn-website/src/shared/domain/valueobject"
 )
 
@@ -13,6 +15,7 @@ type Cart struct {
 	state     State
 	createdAt time.Time
 	products  []Item
+	aggregate.CommonAggregate
 }
 
 // NewCart check provided data and validates that is not in an invalid state
@@ -63,22 +66,37 @@ func FromPrimitives(id, userID, state, createdAt string, products []Item) (Cart,
 	}, nil
 }
 
+// BuyCart change cart state to ordered as a signal that product has been bought
+func (c *Cart) BuyCart() error {
+	c.state = Ordered
+	c.RegisterEvent(cartevents.CartBought{
+		Information: c,
+	})
+
+	return nil
+}
+
+// GetID .
 func (c *Cart) GetID() string {
 	return c.id.String()
 }
 
+// GetUserID .
 func (c *Cart) GetUserID() string {
 	return c.userID.String()
 }
 
+// GetState .
 func (c *Cart) GetState() string {
 	return string(c.state)
 }
 
+// GetCreatedAt .
 func (c *Cart) GetCreatedAt() time.Time {
 	return c.createdAt
 }
 
+// GetProducts .
 func (c *Cart) GetProducts() []Item {
 	return c.products
 }

@@ -8,6 +8,7 @@ import (
 // Domain error for users
 var (
 	ErrBadUserData      = errors.New("User: All user fields must be present")
+	ErrNotFoundUser     = errors.New("User: user was not found")
 	ErrInvalidUser      = errors.New("User: user doesn't exist")
 	ErrInvalidAuth      = errors.New("User: user failed authentication")
 	ErrTooShortPassword = fmt.Errorf("User: password must be larger or equal to %d", minPasswordLength)

@@ -10,4 +10,5 @@ type QueriesRepository interface {
 type CommandsRepository interface {
 	CreateProduct(product Product) error
 	UpdateProduct(product Product) error
+	BuyProduct(product Product, quantity int) error
 }

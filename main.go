@@ -54,6 +54,9 @@ func main() {
 		cartpostgresrepository.NewCartQueriesPostgresRespository(database),
 		cartpostgresrepository.NewCartCommandsPostgresRespository(database),
 		postgresproductrepository.NewProductQueriesPostgresRepository(database),
+		postgresproductrepository.NewPostgresProductCommandsRepository(database),
+		email.SMPTService{},
+		userrepository.NewUserRepositoryPostgresQueries(database),
 	)
 
 	log.Println(fmt.Sprintf("Initializing server in port %s", port))

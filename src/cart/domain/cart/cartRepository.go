@@ -14,5 +14,5 @@ type CommandsRepository interface {
 	AddCartItem(item Item, cartID string) error
 	RemoveCartItem(cartItemID string) error
 	RemoveCart(cartID string) error
-	BuyCart(cartID string) error
+	BuyCart(cart Cart) error
 }

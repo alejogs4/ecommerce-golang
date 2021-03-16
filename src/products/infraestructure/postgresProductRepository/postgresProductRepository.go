@@ -50,3 +50,18 @@ func (ppp PostgresProductCommandsRepository) UpdateProduct(updatedProduct produc
 
 	return err
 }
+
+func (ppp PostgresProductCommandsRepository) BuyProduct(product product.Product, quantity int) error {
+	if err := product.BuyProduct(quantity); err != nil {
+		return err
+	}
+
+	_, err := ppp.db.Exec(
+		"UPDATE products SET quantity=$1, state=$2 WHERE id=$3",
+		product.Quantity(),
+		product.State(),
+		product.ID(),
+	)
+
+	return err
+}

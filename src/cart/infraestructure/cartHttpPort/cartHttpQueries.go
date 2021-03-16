@@ -18,6 +18,7 @@ func (chq *cartHTTPQueries) GetUserCart(rw http.ResponseWriter, r *http.Request)
 
 	user, _ := r.Context().Value("user").(userdto.UserLoginDTO)
 	userCart, err := chq.cartQueriesUseCases.GetUserCart(user.ID)
+
 	if err != nil {
 		httpError := carthttperror.MapCartErrorToHTTPError(err)
 		httputils.DispatchHTTPError(rw, httpError.Message, httpError.StatusCode)

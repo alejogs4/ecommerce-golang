@@ -22,7 +22,6 @@ func (ca *CommonAggregate) RegisterEvent(event domainevent.DomainEvent) {
 
 // DispatchRegisteredEvents implementation to execute user events handlers
 func (ca *CommonAggregate) DispatchRegisteredEvents(eventHandlers map[string][]domainevent.DomainEventHandler, targetEvents []string) {
-	// TODO: Look how abstract this in a separate struct in order to reduce repetition, this will be the same in all
 	eventsString := strings.Join(targetEvents, " ")
 
 	for _, e := range ca.events {

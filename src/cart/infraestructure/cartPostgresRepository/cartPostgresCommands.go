@@ -45,7 +45,7 @@ func (ccr CartCommandsPostgresRespository) RemoveCart(cartID string) error {
 	return err
 }
 
-func (ccr CartCommandsPostgresRespository) BuyCart(cartID string) error {
-	_, err := ccr.db.Exec("UPDATE cart SET state=$1 WHERE id=$2", cart.Ordered, cartID)
+func (ccr CartCommandsPostgresRespository) BuyCart(boughtCart cart.Cart) error {
+	_, err := ccr.db.Exec("UPDATE cart SET state=$1 WHERE id=$2", cart.Ordered, boughtCart.GetID())
 	return err
 }

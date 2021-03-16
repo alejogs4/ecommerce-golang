@@ -56,3 +56,17 @@ func (ctc *cartHTTPCommands) RemoverCartItemController(rw http.ResponseWriter, r
 
 	httputils.DispatchDefaultAPIResponse(rw, cartItemID, "item removed", http.StatusOK)
 }
+
+func (ctc *cartHTTPCommands) BuyCartController(rw http.ResponseWriter, r *http.Request) {
+	rw.Header().Set("Content-type", "application/json")
+
+	loggedUser, _ := r.Context().Value("user").(userdto.UserLoginDTO)
+	err := ctc.cartCommands.BuyCart(loggedUser.ID)
+	if err != nil {
+		httpError := carthttperror.MapCartErrorToHTTPError(err)
+		httputils.DispatchHTTPError(rw, httpError.Message, httpError.StatusCode)
+		return
+	}
+
+	httputils.DispatchDefaultAPIResponse(rw, loggedUser.ID, "Cart bought succesfully", http.StatusOK)
+}
