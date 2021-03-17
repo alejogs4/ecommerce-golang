@@ -49,7 +49,3 @@ func parseRSAKeys(verifyKeyBytes, signingKeyBytes []byte) error {
 	signingKey, err = jwt.ParseRSAPrivateKeyFromPEM(signingKeyBytes)
 	return err
 }
-
-// func CreateToken() (string, error)                    {}
-// func ValidToken() bool                                {}
-// func GetUserFromToken() (userdto.UserLoginDTO, error) {}
