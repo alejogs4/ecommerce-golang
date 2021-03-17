@@ -70,7 +70,7 @@ func FromPrimitives(id, userID, state, createdAt string, products []Item) (Cart,
 func (c *Cart) BuyCart() error {
 	c.state = Ordered
 	c.RegisterEvent(cartevents.CartBought{
-		Information: c,
+		Information: *c,
 	})
 
 	return nil

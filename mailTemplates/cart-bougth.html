@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h1>You have just bought succesfully these products</h1>
+    <ul>
+      {{range .Products}}
+        <li>
+          <strong>{{.Product.Name}}: </strong>
+          <span>{{.Quantity}}</span>
+        </li>
+      {{end}}
+    </ul>
+  </body>
+</html>

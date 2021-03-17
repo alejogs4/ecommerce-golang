@@ -22,7 +22,7 @@ type CartCommands struct {
 
 // NewCartCommand returns a new instance of CartCommands
 func NewCartCommand(commands cart.CommandsRepository, queries cart.QueriesRepository, productQueries product.QueriesRepository) CartCommands {
-	return CartCommands{commands: commands, queries: queries, productQueries: productQueries}
+	return CartCommands{commands: commands, queries: queries, productQueries: productQueries, EventScheduler: usecase.NewEventScheduler()}
 }
 
 // AddCartItem validate if new cart is necessary for the user and at the end add the item if rules apply
