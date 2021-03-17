@@ -12,10 +12,15 @@ type Aggregate interface {
 	DispatchRegisteredEvents(handlers map[string][]domainevent.DomainEventHandler)
 }
 
+// CommonAggregate is the main functionality an aggregate could have
+// as my desire is to practice domain events dispatching an aggregate is supposed to be capable of register and dispatch those events
+// to any part of the system which wants to react with a handler of function to a event in the entity
 type CommonAggregate struct {
 	events []domainevent.DomainEvent
 }
 
+// RegisterEvent register when a event happened, this registered event will be therefore prepared to be dispacthed to any handler interested
+// to its
 func (ca *CommonAggregate) RegisterEvent(event domainevent.DomainEvent) {
 	ca.events = append(ca.events, event)
 }
