@@ -106,7 +106,7 @@ func (p *Product) IsUnAvailable() bool {
 }
 
 // SetProductUnAvailable .
-func (p *Product) SetProductUnAvailable() {
+func (p *Product) setProductUnAvailable() {
 	p.quantity = 0
 	p.state = UnAvailable
 }
@@ -119,7 +119,7 @@ func (p *Product) BuyProduct(boughtProducts int) error {
 	}
 
 	if newProductQuantity == 0 {
-		p.SetProductUnAvailable()
+		p.setProductUnAvailable()
 		return nil
 	}
 

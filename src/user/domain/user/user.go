@@ -52,6 +52,7 @@ func NewUser(id, name, lastname, email, password string, admin, emailVerified bo
 	return createdUser, nil
 }
 
+// FromPrimitives returns a user from its most primitive values, this function assumes that its user will pass right values
 func FromPrimitives(id, name, lastname, email string, admin, emailVerified bool) User {
 	return User{
 		id:            valueobject.NewMaybeEmpty(id),
