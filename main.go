@@ -6,16 +6,9 @@ import (
 	"net/http"
 	"os"
 
-	carthttpport "github.com/alejogs4/hn-website/src/cart/infraestructure/cartHttpPort"
-	cartpostgresrepository "github.com/alejogs4/hn-website/src/cart/infraestructure/cartPostgresRepository"
-	postgresproductrepository "github.com/alejogs4/hn-website/src/products/infraestructure/postgresProductRepository"
-	productshttpport "github.com/alejogs4/hn-website/src/products/infraestructure/productsHttpPort"
-	"github.com/alejogs4/hn-website/src/shared/infraestructure/email"
 	postgresdatabase "github.com/alejogs4/hn-website/src/shared/infraestructure/postgresDatabase"
+	"github.com/alejogs4/hn-website/src/shared/infraestructure/server"
 	"github.com/alejogs4/hn-website/src/shared/infraestructure/token"
-	userhttpport "github.com/alejogs4/hn-website/src/user/infraestructure/userHttpPort"
-	userrepository "github.com/alejogs4/hn-website/src/user/infraestructure/userRepository"
-	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
@@ -34,33 +27,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	httpRouter := mux.NewRouter()
+	router := server.InitializeHTTPRouter(database)
+
 	port := fmt.Sprintf(":%s", os.Getenv("PORT"))
-
-	userhttpport.HandleUserControllers(
-		httpRouter,
-		userrepository.NewUserPostgresCommandsRepository(database),
-		email.SMPTService{},
-	)
-
-	productshttpport.HandleProductsControllers(
-		httpRouter,
-		postgresproductrepository.NewPostgresProductCommandsRepository(database),
-		postgresproductrepository.NewProductQueriesPostgresRepository(database),
-	)
-
-	carthttpport.HandleCartRoutes(
-		httpRouter,
-		cartpostgresrepository.NewCartQueriesPostgresRespository(database),
-		cartpostgresrepository.NewCartCommandsPostgresRespository(database),
-		postgresproductrepository.NewProductQueriesPostgresRepository(database),
-		postgresproductrepository.NewPostgresProductCommandsRepository(database),
-		email.SMPTService{},
-		userrepository.NewUserRepositoryPostgresQueries(database),
-	)
-
 	log.Println(fmt.Sprintf("Initializing server in port %s", port))
-	log.Fatal(http.ListenAndServe(port, httpRouter))
+	log.Fatal(http.ListenAndServe(port, router))
 }
 
 func loadEnviromentVariables() {
