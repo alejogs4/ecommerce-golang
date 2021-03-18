@@ -221,3 +221,122 @@ func TestBuyProduct(t *testing.T) {
 		})
 	}
 }
+
+func TestFromPrimitives(t *testing.T) {
+	testCases := []struct {
+		Name               string
+		ID                 string
+		ProductName        string
+		ProductDescription string
+		ProductPicture     string
+		Quantity           int
+		Price              float64
+		State              product.State
+		ExpectedError      error
+	}{
+		{
+			Name:               "Should return an ErrBadProductData if some of basic data is empty",
+			ID:                 "",
+			ProductName:        fake.Product(),
+			ProductDescription: fake.ProductName(),
+			ProductPicture:     fake.TopLevelDomain(),
+			Quantity:           10,
+			Price:              10,
+			State:              product.Active,
+			ExpectedError:      product.ErrBadProductData,
+		},
+		{
+			Name:               "Should return ErrZeroOrNegativeProductPrice if price is zero or negative",
+			ID:                 fake.IPv4(),
+			ProductName:        fake.Product(),
+			ProductDescription: fake.ProductName(),
+			ProductPicture:     fake.TopLevelDomain(),
+			Quantity:           10,
+			Price:              0,
+			State:              product.Active,
+			ExpectedError:      product.ErrZeroOrNegativeProductPrice,
+		},
+		{
+			Name:               "Should return ErrProductQuantity error if quantity is negative",
+			ID:                 fake.IPv4(),
+			ProductName:        fake.Product(),
+			ProductDescription: fake.ProductName(),
+			ProductPicture:     fake.TopLevelDomain(),
+			Quantity:           -5,
+			Price:              10,
+			State:              product.UnAvailable,
+			ExpectedError:      product.ErrProductQuantity,
+		},
+		{
+			Name:               "Should return ErrInvalidState error if state is not any of the right ones",
+			ID:                 fake.IPv4(),
+			ProductName:        fake.Product(),
+			ProductDescription: fake.ProductName(),
+			ProductPicture:     fake.TopLevelDomain(),
+			Quantity:           10,
+			Price:              10,
+			State:              "Not-valid-state",
+			ExpectedError:      product.ErrInvalidState,
+		},
+		{
+			Name:               "Should return no error if all information is right",
+			ID:                 fake.IPv4(),
+			ProductName:        fake.Product(),
+			ProductDescription: fake.ProductName(),
+			ProductPicture:     fake.TopLevelDomain(),
+			Quantity:           10,
+			Price:              10,
+			State:              product.Active,
+			ExpectedError:      nil,
+		},
+	}
+
+	for _, c := range testCases {
+		t.Run(c.Name, func(t *testing.T) {
+			gotProduct, err := product.FromPrimitives(
+				c.ID,
+				c.ProductName,
+				c.ProductDescription,
+				c.ProductPicture,
+				c.Quantity,
+				float64(c.Price),
+				string(c.State),
+				"2021-03-18T19:31:20.652Z",
+			)
+
+			if !errors.Is(err, c.ExpectedError) {
+				t.Fatalf("Error: Error expected was %v, Got error was %v", c.ExpectedError, err)
+			}
+
+			if err == nil {
+				if gotProduct.ID() != c.ID {
+					t.Fatalf("Error: Expected product id %s, Got product id %v", c.ID, gotProduct.ID())
+				}
+
+				if gotProduct.Name() != c.ProductName {
+					t.Fatalf("Error: Expected product name %s, Got product name %v", c.ProductName, gotProduct.Name())
+				}
+
+				if gotProduct.Description() != c.ProductDescription {
+					t.Fatalf("Error: Expected product description %s, Got product description %v", c.ProductDescription, gotProduct.Description())
+				}
+
+				if gotProduct.Picture() != c.ProductPicture {
+					t.Fatalf("Error: Expected product picture %s, Got product picture %v", c.ProductPicture, gotProduct.Picture())
+				}
+
+				if gotProduct.Quantity() != c.Quantity {
+					t.Fatalf("Error: Expected product quantity %d, Got product quantity %v", c.Quantity, gotProduct.Quantity())
+				}
+
+				if gotProduct.Price() != c.Price {
+					t.Fatalf("Error: Expected product price %x, Got product price %x", c.Price, gotProduct.Price())
+				}
+
+				if gotProduct.State() != c.State.String() {
+					t.Fatalf("Error: Expected product state %s, Got product state %s", c.State, gotProduct.State())
+				}
+			}
+		})
+	}
+}

@@ -75,6 +75,7 @@ func TestSignupEndpoint(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Error: error %v was not expected", err)
 		}
+		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusCreated {
 			t.Fatalf("Error: Expected status code %d, Got status code %d", http.StatusCreated, resp.StatusCode)
@@ -122,6 +123,7 @@ func TestSignupEndpoint(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Error: error sending signup petition - %v", err)
 		}
+		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusBadRequest {
 			t.Fatalf("Error: Expected status code %d, Got status code %d", http.StatusBadRequest, resp.StatusCode)
@@ -174,6 +176,8 @@ func TestLoginEndpoint(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Error: error sending login petition - %v", err)
 		}
+
+		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {
 			t.Fatalf("Error: Expected status code %d, Got status code %d", http.StatusOK, resp.StatusCode)
@@ -243,6 +247,8 @@ func TestLoginEndpoint(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Error: error sending login petition - %v", err)
 		}
+
+		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusBadRequest {
 			t.Fatalf("Error: Expected status code %d, Got status code %d", http.StatusBadRequest, resp.StatusCode)
