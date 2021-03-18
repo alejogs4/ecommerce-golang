@@ -63,6 +63,7 @@ func (cc commandsControllers) LoginUserController(w http.ResponseWriter, r *http
 	if err != nil {
 		httpError := usererrormapper.MapUserErrorToHTTPError(err)
 		httputils.DispatchHTTPError(w, httpError.Message, httpError.StatusCode)
+		return
 	}
 
 	userResponse := map[string]interface{}{"user": user, "token": userToken}
